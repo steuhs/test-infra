@@ -5,6 +5,7 @@
 triggers:
 - repos:
   - kubernetes
+  - kubernetes-csi
   - kubernetes-incubator
   - kubernetes-security
   - kubernetes-sigs
@@ -33,14 +34,17 @@ owners:
 
 approve:
 - repos:
+  - kubernetes/cloud-provider-azure
   - kubernetes/cluster-registry
   - kubernetes/contrib
   - kubernetes/dashboard
+  - kubernetes/dns
   - kubernetes/examples
   - kubernetes/features
   - kubernetes/federation
   - kubernetes/gengo
   - kubernetes/heapster
+  - kubernetes/ingress-gce
   - kubernetes/ingress-nginx
   - kubernetes/kops
   - kubernetes/kube-deploy
@@ -58,9 +62,11 @@ approve:
   - kubernetes/sig-release
   - kubernetes/steering
   - kubernetes/test-infra
+  - kubernetes-incubator/ip-masq-agent
   implicit_self_approve: true
   lgtm_acts_as_approve: true
 - repos:
+  - kubernetes-csi
   - kubernetes-sigs
   - client-go/unofficial-docs
   implicit_self_approve: true
@@ -155,6 +161,8 @@ slack:
             - maciekpytel # 1.10 patch release manager
         release-1.11:
             - foxish # 1.11 patch release manager
+        release-1.12:
+            - dougm # 1.12 branch manager
         feature-serverside-apply:
             - lavalamp # feature-serverside-apply "branch manager"
             - apelisse # feature-serverside-apply "branch manager"
@@ -280,6 +288,7 @@ plugins:
   - approve
 
   kubernetes/dns:
+  - approve
   - trigger
 
   kubernetes/examples:
@@ -291,6 +300,7 @@ plugins:
   - stage
 
   kubernetes/ingress-gce:
+  - approve
   - trigger
 
   kubernetes/ingress-nginx:
@@ -393,6 +403,7 @@ plugins:
   - blunderbuss
   - config-updater
   - milestone
+  - owners-label
   - override
   - trigger
   - verify-owners
@@ -421,14 +432,6 @@ plugins:
   - wip
   - yuks
 
-  kubernetes-incubator:
-  - assign
-  - cla
-  - label
-  - lgtm
-  - lifecycle
-  - size
-
   kubernetes-client:
   - assign
   - cla
@@ -442,6 +445,33 @@ plugins:
   - cat
   - dog
 
+  kubernetes-csi:
+  - approve
+  - assign
+  - blunderbuss
+  - cat
+  - cla
+  - dog
+  - heart
+  - help
+  - hold
+  - label
+  - lgtm
+  - lifecycle
+  - shrug
+  - size
+  - skip
+  - wip
+  - yuks
+
+  kubernetes-incubator:
+  - assign
+  - cla
+  - label
+  - lgtm
+  - lifecycle
+  - size
+
   kubernetes-incubator/service-catalog:
   - approve
   - blunderbuss
@@ -452,6 +482,11 @@ plugins:
   - trigger
   - verify-owners
   - wip
+
+  kubernetes-incubator/ip-masq-agent:
+  - approve
+  - hold
+  - trigger
 
   kubernetes-sigs:
   - approve
