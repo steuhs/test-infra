@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package git
+package fileops
 
 import (
 	"fmt"
@@ -62,5 +62,22 @@ func TestHasGitAttrCovExcNegative(t *testing.T) {
 	fmt.Printf("gopath=*%v*\n", gopath)
 	if gopath != "" && hasGitAttr(gitAttrCoverageExcluded, noAttrFilePath) {
 		t.Fail()
+	}
+}
+
+
+func TestSourceFilePath(t *testing.T) {
+	input := "pkg/fake_test.go"
+	actual := SourceFilePath(input)
+	expected := "pkg/fake.go"
+	if actual != expected {
+		t.Fatalf(test.StrFailure(input, actual, expected))
+	}
+
+	input = "pkg/fake_2.go"
+	actual = SourceFilePath(input)
+	expected = "pkg/fake_2.go"
+	if actual != expected {
+		t.Fatalf(test.StrFailure(input, actual, expected))
 	}
 }

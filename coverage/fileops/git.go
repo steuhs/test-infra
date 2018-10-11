@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package git
+package fileops
 
 import (
 	"bytes"
@@ -64,4 +64,22 @@ func IsCoverageSkipped(filePath string) bool {
 		return true
 	}
 	return false
+}
+
+//SourceFilePath returns corresponding source file path of given path (e.g. abc_test.go -> abc.go)
+func SourceFilePath(path string) string {
+	if strings.HasSuffix(path, "_test.go") {
+		return strings.TrimSuffix(path, "_test.go") + ".go"
+	}
+	return path
+}
+
+//TestToSourceFilePath returns corresponding source file path, given the _test.go file path  (e.g. abc_test.go -> abc.go)
+func TestToSourceFilePath(path string) string {
+	return strings.TrimSuffix(path, "_test.go") + ".go"
+}
+
+//SourceToTestFilePath returns corresponding _test.go path, given source file path (e.g. abc.go -> abc_test.go)
+func SourceToTestFilePath(path string) string {
+	return strings.TrimSuffix(path, ".go") + "_test.go"
 }

@@ -23,7 +23,7 @@ import (
 	"strconv"
 	"strings"
 
-	"k8s.io/test-infra/coverage/git"
+	"k8s.io/test-infra/coverage/fileops"
 	"k8s.io/test-infra/coverage/githubUtil"
 	"k8s.io/test-infra/coverage/str"
 )
@@ -61,7 +61,7 @@ func updateConcernedFiles(concernedFiles *map[string]bool, filePath string,
 			isConcerned = false
 			return
 		}
-		isConcerned = !git.IsCoverageSkipped(filePath)
+		isConcerned = !fileops.IsCoverageSkipped(filePath)
 		(*concernedFiles)[filePath] = isConcerned
 	}
 	return

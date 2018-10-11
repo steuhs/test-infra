@@ -70,18 +70,3 @@ func TestGetConcernedFiles(t *testing.T) {
 	}
 }
 
-func TestSourceFilePath(t *testing.T) {
-	input := "pkg/fake_test.go"
-	actual := sourceFilePath(input)
-	expected := "pkg/fake.go"
-	if actual != expected {
-		t.Fatalf(test.StrFailure(input, actual, expected))
-	}
-
-	input = "pkg/fake_2.go"
-	actual = sourceFilePath(input)
-	expected = "pkg/fake_2.go"
-	if actual != expected {
-		t.Fatalf(test.StrFailure(input, actual, expected))
-	}
-}
