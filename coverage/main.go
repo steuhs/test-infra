@@ -29,6 +29,7 @@ import (
 	"k8s.io/test-infra/coverage/logUtil"
 	"k8s.io/test-infra/coverage/testgrid"
 	"k8s.io/test-infra/coverage/workflows"
+	"k8s.io/test-infra/coverage/addtests"
 )
 
 const (
@@ -86,6 +87,9 @@ func main() {
 		keyCovProfileFileName,
 		defaultStdoutRedirect,
 	)
+
+	addtests.RemoveAllEmptyTests(*coverageTargetDir)
+	addtests.AddTests(*coverageTargetDir)
 
 	localArtifacts.ProduceProfileFile(*coverageTargetDir)
 

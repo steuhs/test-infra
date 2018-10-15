@@ -29,6 +29,16 @@ func CreateMarker(dir, fileName string) {
 	logrus.Infof("Created marker file '%s'\n", fileName)
 }
 
+// CreateMarker produces empty file as marker
+func CreateMarkerNew(filePath string) error{
+	file, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	file.Close()
+	return nil
+}
+
 // Write writes the content of the string to a file in the directory
 func Write(content *string, destinationDir, fileName string) {
 	filePath := path.Join(destinationDir, fileName)
@@ -44,6 +54,25 @@ func Write(content *string, destinationDir, fileName string) {
 		}
 	}
 	defer file.Close()
+}
+
+// Write writes the content of the string to a file in the directory
+func WriteNew(content *string, filePath string) error{
+	file, err := os.Create(filePath)
+	if err != nil {
+		return fmt.Errorf("error writing file: %v", err)
+	} else {
+		logrus.Infof("Created file:%s", filePath)
+		if content == nil {
+			logrus.Infof("No content to be written to file '%s'", filePath)
+		} else {
+			_, err = fmt.Fprint(file, *content)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return file.Close()
 }
 
 //MkdirAll makes directory on disk. Recursively adds parents directory if not exist.

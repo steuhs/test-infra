@@ -23,6 +23,8 @@ import (
 	"github.com/sirupsen/logrus"
 	covIo "k8s.io/test-infra/coverage/io"
 	"k8s.io/test-infra/coverage/logUtil"
+	"log"
+	"io/ioutil"
 )
 
 // runProfiling writes coverage profile (&its stdout) by running go test on
@@ -39,12 +41,20 @@ func runProfiling(covTargets []string, localArts *LocalArtifacts) {
 
 	logrus.Infof("go cmdArgs=%v\n", cmdArgs)
 	cmd := exec.Command("go", cmdArgs...)
+	stderr, err := cmd.StderrPipe()
 
-	goTestCoverStdout, errCmdOutput := cmd.Output()
+	err = cmd.Start()
+	if err != nil {
+		log.Fatalf("cmd fails to start: %v", err)
+	}
+	stdoutText, _ := ioutil.ReadAll(stderr)
+	err = cmd.Wait()
 
-	if errCmdOutput != nil {
+	//goTestCoverStdout, errCmdOutput := cmd.Output()
+
+	if err != nil {
 		logUtil.LogFatalf("Error running 'go test -coverprofile %s': error='%v'; stdout='%s'",
-			errCmdOutput, goTestCoverStdout, profilePath)
+			profilePath, err, stdoutText)
 	} else {
 		logrus.Infof("coverage profile created @ '%s'", profilePath)
 		covIo.CreateMarker(localArts.Directory(), CovProfileCompletionMarker)
@@ -53,7 +63,7 @@ func runProfiling(covTargets []string, localArts *LocalArtifacts) {
 	stdoutPath := localArts.CovStdoutPath()
 	stdoutFile, err := os.Create(stdoutPath)
 	if err == nil {
-		stdoutFile.Write(goTestCoverStdout)
+		stdoutFile.Write(stdoutText)
 	} else {
 		logrus.Infof("Error creating stdout file: %v", err)
 	}

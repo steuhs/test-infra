@@ -18,13 +18,34 @@ package addtests
 
 import (
 	"os"
-	"strings"
+	"path/filepath"
+
 	"k8s.io/test-infra/coverage/io"
+	"k8s.io/test-infra/coverage/fileops"
+	"bufio"
+	"strings"
 )
 
-//hasTest checks if a '.go' file has its '_test.go' correspondence
-func hasTest(path string) {
+// creates template file with no content but the package name
+func createTemplateFile(path string) error{
+	packageName := fileops.PackageName(path)
+	content := "package " + packageName
+	return io.WriteNew(&content, path)
+}
 
+func getPackageLine(path string) string {
+	file, err := os.Open(path)
+	if err != nil {
+		return ""
+	}
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan(){
+		line := scanner.Text()
+		if strings.HasPrefix(line, "package ") {
+			return line
+		}
+	}
+	return ""
 }
 
 func addTest(path string, info os.FileInfo, err error) error {
@@ -32,15 +53,25 @@ func addTest(path string, info os.FileInfo, err error) error {
 		return err
 	}
 	fileName := info.Name()
-	//strings.HasSuffix(path, )
-	if !info.IsDir() && strings.HasSuffix(fileName, ".go") {
-		exists, ioErr := io.FileOrDirExistsNew()
+	if !info.IsDir() && fileops.IsSourceFile(fileName) {
+		testPath := fileops.SourceToTestFilePath(path)
+		exists, ioErr := io.FileOrDirExistsNew(testPath)
 		if err != nil {
 			return ioErr
 		}
-		if !exists {
-
+		if !exists && !isVendor(path) && !fileops.IsCoverageSkipped(path){
+			content := getPackageLine(path)
+			return io.WriteNew(&content, testPath)
+			//return createTemplateFile(testPath)
 		}
-
 	}
+	return nil
+}
+
+func AddTests(dir string) error {
+	return filepath.Walk(dir, addTest)
+}
+
+func isVendor(path string) bool {
+	return strings.HasPrefix(path, "vendor/") || strings.Contains(path, "/vendor/")
 }
