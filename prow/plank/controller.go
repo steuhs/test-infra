@@ -412,7 +412,7 @@ func (c *Controller) syncPendingJob(pj prowapi.ProwJob, pm map[string]coreapi.Po
 			// abort the job, and talk to Github
 			pj.SetComplete()
 			pj.Status.State = prowapi.AbortedState
-			pj.Status.Description = "Job aborted."
+			pj.Status.Description = "Job aborted due to pod pending timeout."
 
 		default:
 			// Pod is running. Do nothing.
